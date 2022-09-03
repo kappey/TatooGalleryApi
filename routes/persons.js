@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authToken } = require("../middleware/auth");
-const { PersonModel, validPerson } = require("../models/personModel");
+const { PersonModel } = require("../models/personModel");
 
 /* GET all Persons */
 // router.get('/', authToken, async (req, res, next) => {
@@ -14,7 +14,7 @@ router.get('/', async (req, res, next) => {
   let ifReverse = (req.query.r == "y") ? -1 : 1;
 
   try {
-    let data = await PersonModel.find({isActive:true, $or: [{ firstName: qRegExp }, { lastName: qRegExp }, { currentLocation: qRegExp }, { email: qRegExp }]})
+    let data = await PersonModel.find({isActive:true, $or: [{ firstName: qRegExp }, { lastName: qRegExp }, { email: qRegExp }]})
         .sort({ [sortQ]: ifReverse })
         .limit(perPage)
         .skip(page * perPage-perPage)

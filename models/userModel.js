@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const minDOB = new Date(Date.now() - 1000 * 60 * 60 * 24 * 365 * 18);
 
 exports.genSignInToken = (_id) => {
-  let token = jwt.sign({_id},process.env.jwtSecret);
+  let token = jwt.sign({_id}, process.env.jwtSecret);
   return token;
 }
 
