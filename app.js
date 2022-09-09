@@ -6,7 +6,6 @@ const { routesInit, corsAccessControl } = require ("./routes/configRoute");
 
 require ('dotenv').config();
 require('./db/mongoConnection');
-require ('dotenv').config();
 
 const app = express();
 app.use(express.static(path.resolve('./public')))

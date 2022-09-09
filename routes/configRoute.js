@@ -1,7 +1,12 @@
 const indexRoute = require("./index");
-const userRoute = require("./users");
-const personRoute = require("./persons");
+const userRoute = require("./user");
+const personRoute = require("./person");
+const categoryRoute = require("./category");
+const imageRoute = require("./image");
+const reviewRoute = require("./review");
+const tatooRoute = require("./tatoo");
 const testRoute = require("./test");
+
 
 exports.corsAccessControl = (app) => {
     app.all('*', (req, res, next) => {
@@ -15,10 +20,13 @@ exports.corsAccessControl = (app) => {
 
   exports.routesInit = (app) => {
     app.use("/", indexRoute);
-    app.use("/persons", personRoute);
-    app.use("/users", userRoute);
+    app.use("/person", personRoute);
+    app.use("/user", userRoute);
+    app.use("/category", categoryRoute);
+    app.use("/image", imageRoute);
+    app.use("/review", reviewRoute);
+    app.use("/tatoo", tatooRoute);
     app.use("/test", testRoute);
-  
     app.use((req, res) => {
       res.status(404).json({ msg: "404 page not found" })
     })
