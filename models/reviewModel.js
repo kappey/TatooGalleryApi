@@ -13,7 +13,7 @@ const reviewSchema = new mongoose.Schema({
         type:Date, default:Date.now()
     }
 });
-exports.ReviewModel =  mongoose.model("categories" , reviewSchema);
+exports.ReviewModel =  mongoose.model("reviews" , reviewSchema);
 
 // Check valid Review
 exports.validReview= (_reviewBody) => {

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { authToken } = require("../middleware/auth");
 const { CategoryModel, validCategory } = require("../models/categoryModel");
 
 /* GET all Ctegories */
@@ -34,7 +35,7 @@ router.get("/:categoryID", async (req, res) => {
 });
 
 /* Create Category */
-router.post('/',async(req,res) => {
+router.post('/',authToken, async(req,res) => {
     let validBody = validCategory(req.body);
     if (validCategory.error) {
       return res.status(400).json(validBody.error.details);
