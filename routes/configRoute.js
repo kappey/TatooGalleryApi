@@ -6,7 +6,8 @@ const imageRoute = require("./image");
 const reviewRoute = require("./review");
 const tattooRoute = require("./tattoo");
 const blogRoute = require("./blog");
-const message = require("./message");
+const messengerRoute = require("./messenger");
+const messageRoute = require("./message");
 const testRoute = require("./test");
 
 
@@ -29,7 +30,8 @@ exports.corsAccessControl = (app) => {
     app.use("/reviews", reviewRoute);
     app.use("/tattoos", tattooRoute);
     app.use("/or-fadida-blog", blogRoute);
-    app.use("/messenger", message);
+    app.use("/messenger", messengerRoute);
+    app.use("/message", messageRoute);
     app.use("/tests", testRoute);
     app.use((req, res) => {
       res.status(404).json({ msg: "404 page not found" })
