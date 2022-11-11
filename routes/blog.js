@@ -2,12 +2,12 @@ const express = require('express');
 
 const { authToken } = require("../middleware/auth");
 const { UserModel } = require('../models/userModel');
-const { TattooModel, validTattoo } = require('../models/tattooModel');
+const { BlogModel, validBlog } = require('../models/blogModel');
 
 
 const router = express.Router();
 
-/* GET all tattoos. */
+/* GET all blogs. */
 router.get('/', async (req, res) => {
     let qSearch = req.query.s;
     let qRegExp = new RegExp(qSearch, "i");
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
     let ifReverse = (req.query.r == "y") ? -1 : 1;
   
     try {
-      let data = await TattooModel.find()
+      let data = await BlogModel.find()
       .sort({ [sortQ]: ifReverse })
           .limit(perPage)
           .skip(page * perPage-perPage)
@@ -29,32 +29,19 @@ router.get('/', async (req, res) => {
   }
   });
   
-  /* GET all tattoos by Category */
-  router.get("/:categoryID", async (req, res) => {
-    let category_id_tattoo = req.params.categoryID;
-    try {
-        let data = await TattooModel.find({category_id:category_id_tattoo})
-        res.json(data);
-    }
-    catch (err) {
-        console.log(err);
-        res.status(400).json(err);
-    }
-  });
-
-
- /* Add new tattoo */
+ /* Add new blog */
  router.post("/", authToken, async (req, res) => {
-    let validBody = validTattoo(req.body);
+    let validBody = validBlog(req.body);
     if (validBody.error) {
         return res.status(400).json(validBody.error.details);
     }
     try {
-        let tattoo = new TattooModel(req.body);
-        // let user = await UserModel.findById(req.userData._id);
+        let blog = new BlogModel(req.body);
+        let user = await UserModel.findById(req.userData._id);
+        blog.person_id = user.person_id;
 
-        await tattoo.save();
-        res.status(201).json(tattoo);
+        await blog.save();
+        res.status(201).json(blog);
     }
     catch (err) {
         console.log(err);
@@ -63,17 +50,17 @@ router.get('/', async (req, res) => {
 });
 
 
-/* Like / Unlike tattoo */
-router.put("/like/:tattooID", authToken,  async (req, res) =>{
+/* Like / Unlike blog */
+router.put("/like/:blogID", authToken,  async (req, res) =>{
    try{ 
-        let tattoo = await TattooModel.findById(req.params.tattooID);
+        let blog = await BlogModel.findById(req.params.blogID);
         let user = await UserModel.findById(req.userData._id);
 
-       if(!tattoo.likes.includes(user.person_id)){
-           await tattoo.updateOne({$push: {likes: user.person_id}});
+       if(!blog.likes.includes(user.person_id)){
+           await blog.updateOne({$push: {likes: user.person_id}});
            res.status(200).json("liked");
        }else{
-           await tattoo.updateOne({$pull: {likes: user.person_id}});
+           await blog.updateOne({$pull: {likes: user.person_id}});
            res.status(200).json("unliked");
        }
     }catch (error){
@@ -82,15 +69,15 @@ router.put("/like/:tattooID", authToken,  async (req, res) =>{
     }
 })
 
- /* Edit tattoo */
-router.put("/:tattooEditID",  authToken, async (req, res) => {
-    let id_tattoo_edit = req.params.tattooEditID;
-    let validBody = validTattoo(req.body);
+ /* Edit blog */
+router.put("/:blogEditID",  authToken, async (req, res) => {
+    let id_blog_edit = req.params.blogEditID;
+    let validBody = validBlog(req.body);
     if (validBody.error) {
         return res.status(400).json(validBody.error.details);
     }
     try {
-        let itemEdit = await TattooModel.updateOne({ _id: id_tattoo_edit }, req.body);
+        let itemEdit = await BlogModel.updateOne({ _id: id_blog_edit }, req.body);
         res.json(itemEdit);
     }
     catch (err) {
@@ -99,11 +86,11 @@ router.put("/:tattooEditID",  authToken, async (req, res) => {
     }
 });
 
-/* Delete tattoo */
-router.delete("/:tattooDeleteID", authToken, async (req, res) => {
-    let delete_id = req.params.tattooDeleteID;
+/* Delete blog */
+router.delete("/:blogDeleteID", authToken, async (req, res) => {
+    let delete_id = req.params.blogDeleteID;
     try {
-        let itemDelete = await TattooModel.deleteOne({ _id: delete_id /*, user_id: req.userData._id */  });
+        let itemDelete = await BlogModel.deleteOne({ _id: delete_id /*, user_id: req.userData._id */  });
         res.json(itemDelete);
     }
     catch (err) {

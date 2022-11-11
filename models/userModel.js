@@ -32,16 +32,9 @@ exports.validSignUp = (_userBody) => {
         firstName:Joi.string().min(3).max(200).required(),
         lastName:Joi.string().min(3).max(200).required(),
         email:Joi.string().min(10).max(100).email().required(),
-        address:Joi.string().min(3).max(200).required(),
-        city:Joi.string().min(3).max(30).required(),
-        country:Joi.string().min(3).max(30).required(),
-        state:Joi.string().min(3).max(30),
-        language:Joi.string().min(3).max(10),
-        phoneNumber:Joi.string().min(3).max(15).required(),
+        phoneNumber:Joi.string().min(3).max(15),
         dob:Joi.date().max(minDOB).required(),
         password:Joi.string().min(3).max(200).required(),
-        latitude:Joi.number(),
-        longitude:Joi.number(),
     })
     return joiSchema.validate(_userBody);
   }

@@ -9,6 +9,7 @@ const jwt = require("jsonwebtoken");
 const { authToken } = require('../middleware/auth');
 const { UserModel, validSignIn, validSignUp, validForgotPassword,validResetPasswords, genForgotPasswordToken, genSignInToken } = require('../models/userModel');
 const { PersonModel, validPerson } = require('../models/personModel');
+const { MessengerModel, validMessanger } = require('../models/messengerModel');
 
 /* SIGN UP */
 router.post('/signup', async (req, res) => {
@@ -24,6 +25,9 @@ router.post('/signup', async (req, res) => {
       user.person_id = person._id;
       user.password = await bcrypt.hash(req.body.password, salt);
       await user.save();
+      let messenger = new MessengerModel();
+      messenger.person_id = person._id;
+      await messenger.save();
       res.status(201).json(_.pick(person, ['firstName', 'lastName']));
   }
   catch (err) {
@@ -32,8 +36,9 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+
 /* SIGN IN */
-router.post('/signIn',async(req,res) => {
+router.post('/signin',async(req,res) => {
   let validBody = validSignIn(req.body);
   if (validBody.error) {
     return res.status(400).json(validBody.error.details);
@@ -49,7 +54,11 @@ router.post('/signIn',async(req,res) => {
       return res.status(400).json({msg:"user or password is invalid"});  
     }
     let userToken = genSignInToken(user._id);
-    res.json({token:userToken, personID: user.person_id});
+    let signedInUser = {token:userToken, personID: user.person_id}
+    if(person.isAdmin){
+      signedInUser = {token:userToken, personID: user.person_id, isAdmin: person.isAdmin};
+    }
+    res.json(signedInUser);
   }
   catch (err) {
     console.log(err);
@@ -57,7 +66,7 @@ router.post('/signIn',async(req,res) => {
   }
 });
 
-/* Valid users token ?????*/
+/* Valid user token */
 router.get('/', authToken, async (req, res) => {
   try {
     let user = await UserModel.findById(req.userData._id);
@@ -68,6 +77,23 @@ router.get('/', authToken, async (req, res) => {
     res.status(400).json(err);
   }
 });
+
+/* Valid admin token */
+router.get('/admin', authToken, async (req, res) => {
+  try {
+    let person = await PersonModel.findById(req.userData._id);
+    if (!person.isAdmin){
+      console.log(err);
+      return res.status(400).json(err).json({msg:"user is not admin"});
+    }
+    res.json({isAdmin: person.isAdmin});
+  }
+  catch (err) {
+    console.log(err);
+    res.status(400).json(err);
+  }
+});
+
 
 
 // /* Forgot password */

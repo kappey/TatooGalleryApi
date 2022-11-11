@@ -4,8 +4,7 @@ const { authToken } = require("../middleware/auth");
 const { PersonModel } = require("../models/personModel");
 
 /* GET all Persons */
-// router.get('/', authToken, async (req, res, next) => {
-router.get('/', async (req, res, next) => {
+router.get('/', authToken, async (req, res, next) => {
   let qSearch = req.query.s;
   let qRegExp = new RegExp(qSearch, "i");
   let perPage = (req.query.pp) ? Number(req.query.pp) : 50;
@@ -27,8 +26,7 @@ catch (err) {
 });
 
 /* GET Person by ID */
-// router.get("/:personID", authToken, async (req, res) => {
-router.get("/:personID", async (req, res) => {
+router.get("/:personID", authToken, async (req, res) => {
   let person_id = req.params.personID;
   try {
       let data = await PersonModel.findOne({_id:person_id})

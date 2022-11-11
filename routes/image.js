@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
   });
   
   /* GET all images by ID */
-    router.get("/:personID", async (req, res) => {
+router.get("/:personID", async (req, res) => {
     let person_id_image = req.params.personID;
     try {
         let data = await ImageModel.find({person_id:person_id_image})
@@ -44,7 +44,7 @@ router.get('/', async (req, res) => {
 
 
       /* GET one image */
-    router.get("/single/:imageID", async (req, res) => {
+router.get("/single/:imageID", async (req, res) => {
         let image_id = req.params.imageID;
         try {
             let data = await ImageModel.findOne({_id:image_id})
@@ -57,8 +57,7 @@ router.get('/', async (req, res) => {
       });
 
    /* Upload new image */
-   router.post("/", authToken, async (req, res) => {
-   
+router.post("/", authToken, async (req, res) => {
     if (req.files?.file){
         try{
             let image = new ImageModel();
@@ -72,11 +71,11 @@ router.get('/', async (req, res) => {
 
             if (file.size >= 50 * 1024 * 1024) { 
                 return res.status(400).json({ err: "The file is too large, only files up to 50 MB are allowed." });
-              }  
+            }  
             
             else if (!allowExt_ar.includes(file.ext)) {
                 return res.status(400).json({ err: "Error: Please upload file in one of those formats: .jpg /.png /.gif /.jpeg /.svg" });
-              }
+            }
 
             file.mv("public"+filePath), err => {
                 if (err) {
@@ -87,7 +86,7 @@ router.get('/', async (req, res) => {
             }
 
             image.person_id = user.person_id;
-            image.filePath = filePath;
+            image.imagePath = filePath;
 
             await image.save();
             res.status(201).json(image._id);
@@ -105,7 +104,7 @@ router.delete("/:imageDelete", authToken, async (req, res) => {
     let path = './public';
     try {
         let data = await ImageModel.findOne({_id:deleteImageID})
-        path = path + data.filePath;
+        path = path + data.imagePath;
     }
     catch (err) {
         console.log(err);
